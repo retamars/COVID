@@ -1,13 +1,11 @@
 ---
 title: "COVID-19 Argentina"
 output:
-  html_document:
-    toc: true
-    toc_float: true
-    # collapsed: false
-    number_sections: false
-    toc_depth: 3
-    #code_folding: hide
+  html_document: 
+    keep_md: yes
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
 ---
 
 
@@ -20,7 +18,7 @@ output:
 )
 ```
 
-```{r importar, message=FALSE, warning=FALSE, include=FALSE}
+```{r importarSud, message=FALSE, warning=FALSE, include=FALSE}
   library(readr)
   library(dplyr)
   library(tidyr)
@@ -150,7 +148,6 @@ sep.miles <- function(x){format(x,big.mark=".")}
  
 ```
 
-<!-- # Sudamérica -->
 
 ## Inicios
 En Sud América el primer caso detectado de COVID-19 se informa el día `r lubridate::day(min(sudamerica$fecha))` de `r format(min(sudamerica$fecha), "%b")` del 2020 en `r sudamerica %>% filter(fecha==min(sudamerica$fecha)) %>% select(pais)`. 

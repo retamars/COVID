@@ -4,7 +4,7 @@ output:
   html_document:
     toc: true
     toc_float: true
-    # collapsed: false
+    collapsed: true
     number_sections: false
     toc_depth: 4
     #code_folding: hide
@@ -16,29 +16,29 @@ output:
 	echo = FALSE,
 	message = FALSE,
 	warning = FALSE,
-	cache = TRUE
+	cache = FALSE
 )
 ```
 
-```{r importar, message=FALSE, warning=FALSE, include=FALSE}
-library(readr)
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(lubridate)
-library(knitr)
-library(kableExtra)
-library(highcharter)
-library(rjson)
-library(plotly)
-library(gganimate)
-library(stringr)
-library(leaflet)
-library(sf)
-library(tmap)
-library(googlesheets4)
-library(readxl)
-# library(shiny)
+```{r importarArg, message=FALSE, warning=FALSE, include=FALSE}
+  library(readr)
+  library(dplyr)
+  library(tidyr)
+  library(ggplot2)
+  library(lubridate)
+  library(knitr)
+  library(kableExtra)
+  library(highcharter)
+  library(rjson)
+  library(plotly)
+  library(gganimate)
+  library(stringr)
+  library(leaflet)
+  library(sf)
+  library(tmap)
+  library(googlesheets4)
+  library(readxl)
+  # library(shiny)
 
 sep.miles <- function(x){format(x,big.mark=".")}
  
@@ -214,7 +214,7 @@ sep.miles <- function(x){format(x,big.mark=".")}
   
 ```
 
-<!-- # Argentina -->
+
 
 ## Cantidad de Casos Actuales
 En Argentina los datos son informados diariamente por el Ministerio de Salud de la Nación. Estos datos se informan de manera desestructurada y diariamente se modifica la cantidad de datos brindados.
@@ -512,8 +512,7 @@ Gracias al aporte de reunir y disponibilizar los datos de [Sistemas Mapache](htt
   
   
   leaflet(data = deptos_covid) %>% addTiles() %>%
-     # addProviderTiles(proveedorIGN) %>% 
-    addProviderTiles(providers$OpenStreetMap) %>% 
+     addProviderTiles(providers$OpenStreetMap) %>%
     addPolygons( color = "#444444", weight = 1,
                  fillColor = color(deptos_covid$casos), fillOpacity = 0.6,
                  label = paste(deptos_covid$provincia, ", ",

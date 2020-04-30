@@ -41,9 +41,9 @@ Este trabajo fue realizado con el objetivo de aportar información sobre la pand
 </div>
 <div class="col-sm-6">
 
-### [Grupo de Investigación en Bases de Datos](https://crumplab.github.io)
+### [Grupo de Investigación en Bases de Datos](http://www.frcu.utn.edu.ar/gibd/)
 
-<a href = "https://crumplab.github.io">
+<a href = "http://www.frcu.utn.edu.ar/gibd/">
 ![](images/logo.png)
 </a>
 </div>

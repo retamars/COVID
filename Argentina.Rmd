@@ -51,10 +51,8 @@ sep.miles <- function(x){format(x,big.mark=".")}
     {
       argentina <- fromJSON(file = "data/mapas/ar-all.geo.json")
     
-      # entrerios <- fromJSON(file="data/mapas/entrerios_dpto.geo.json")
       deptos <- st_read(dsn ="data/mapas/departamentos.shp") 
-      # deptos_er <- st_read(dsn ="data/mapas/departamentos_entrerios.shp") 
-    
+     
       localidades <- read_csv("data/mapas/localidades.csv", 
                               locale = locale(encoding = "ISO-8859-1"))
       
@@ -68,97 +66,6 @@ sep.miles <- function(x){format(x,big.mark=".")}
       #                                locale = locale(decimal_mark = ",", encoding = "ISO-8859-1"),
       #                               trim_ws = TRUE)
   }  
-
-  ## Dataset Mundial
-    # {
-      # mundial <- covid19[,-c(2,3)]
-      # mundial <- mundial %>% gather(fecha, casos, 2:max(col(mundial)), -`Country/Region`) 
-      # names(mundial) <- c('pais', 'fecha', 'confirmados')
-      # mundial$pais <- if_else(mundial$pais==	'US', 'United States of America', mundial$pais)
-      # 
-      # mundial <- mundial %>% group_by(pais, fecha) %>% 
-      #   mutate(casos =  sum(confirmados)) %>% 
-      #   select(pais, fecha, casos) %>% unique()
-      # 
-      # mundial$fecha <-paste0(mundial$fecha,'20')
-      # mundial$fecha <-as.Date(mundial$fecha ,"%m/%d/%Y")
-      # 
-      # mundial<-mundial %>%
-      #   filter(casos > 0) %>% 
-      #   group_by(pais) %>% 
-      #   arrange(pais,fecha) %>% 
-      #   mutate(dia= 1:n())
-      # 
-      # mundial_m <- covid19_m[,-c(2,3)]
-      #    
-      # mundial_m <- mundial_m %>% gather(fecha, casos, 2:max(col(mundial_m)), -`Country/Region`) 
-      # names(mundial_m) <- c('pais', 'fecha', 'muertes')
-      # mundial_m$pais <- if_else(mundial_m$pais==	'US', 'United States of America', mundial_m$pais)
-      # 
-      # mundial_m <- mundial_m %>% group_by(pais, fecha) %>% 
-      #   mutate(muertes =sum(muertes)) %>% select(pais, fecha, muertes) %>% unique()
-      # 
-      # mundial_m$fecha <-paste0(mundial_m$fecha,'20')
-      # mundial_m$fecha <-as.Date(mundial_m$fecha ,"%m/%d/%Y")
-      # 
-      # mundial_m<-mundial_m %>%
-      #   filter(muertes > 0) %>% 
-      #   group_by(pais) %>% 
-      #   arrange(pais,fecha) %>% 
-      #   mutate(dia= 1:n())
-      # 
-      # mundial_ambos <- mundial %>% 
-      #   left_join(mundial_m, by=c('pais', 'fecha')) %>%  select(pais, fecha, dia.x, casos, muertes)
-      # mundial_ambos$muertes <- if_else(is.na(mundial_ambos$muertes), 0, mundial_ambos$muertes)
-      # 
-      # names(mundial_ambos) <- c("pais", "fecha", "dia", "casos", "muertes")
-      # mundial_ambos$fecha <-as.Date(mundial_ambos$fecha ,"%m/%d/%Y")
-      # 
-      # rm(mundial_m, mundial)
-      # }
-    
-  ## Dataset Paises mas afectados y Arg
-    # { mayores <- c('China', 'France', 'US', 'Spain', 'Italy',  'Germany', 'Argentina')#, 'Korea, South')
-    #   
-    #   afectados <- mundial_ambos %>% 
-    #     filter(pais %in% mayores) %>% 
-    #     select(pais, fecha, casos, muertes,  dia) %>% 
-    #     arrange(pais,fecha) 
-    # 
-    #     afectados$muertes <- if_else(is.na(afectados$muertes), 0, afectados$muertes)
-    #     
-    #     afectados$pais <- gsub("US", "EEUU", afectados$pais)
-    #     afectados$pais <- gsub("Spain", "España", afectados$pais)
-    #     afectados$pais <- gsub("Korea, South", "Corea del Sur", afectados$pais)
-    #     afectados$pais <- gsub("Italy", "Italia", afectados$pais)
-    #     afectados$pais <- gsub("Germany", "Alemania", afectados$pais)
-    #     afectados$pais <- gsub("France", "Francia", afectados$pais)
-    #     rm(masAfectados, masAfectados_m)
-    # }
-    
-
-  ## Dataset Sudamérica
-  #   { 
-  #     sudamerica <- mundial_ambos %>% 
-  #       filter(pais %in% poblacion$pais) 
-  #     
-  #     sudamerica <- sudamerica %>% group_by(pais) %>% mutate(nuevos = casos-lag(casos))
-  #     
-  #     sudamerica$nuevos <- if_else(is.na(sudamerica$nuevos)&sudamerica$dia==1, 
-  #                                  sudamerica$casos, sudamerica$nuevos)
-  #     
-  #     sudamerica$semanal <- 0
-  #       for(p in sudamerica$pais){
-  #         for(i in 8:max(sudamerica$dia[sudamerica$pais==p])){
-  #           semanal <- sum(sudamerica$nuevos[((sudamerica[,"pais"]==p)&
-  #                                               (sudamerica[,"dia"]<=i)&(sudamerica[,"dia"]>=(i-6)))])
-  #           sudamerica$semanal[((sudamerica[,"pais"]==p) & 
-  #                                 (sudamerica[,"dia"]==i))] <- if_else(semanal >0, semanal, 0)
-  #         }}
-  # 
-  #   sudamerica$muertes <- if_else(is.na(sudamerica$muertes), 0, sudamerica$muertes)
-  # }
-    
   ## Dataset Argentina
     {  
       ### Totales generales
@@ -187,19 +94,11 @@ sep.miles <- function(x){format(x,big.mark=".")}
     {
        casos_pronvinciales <-read_delim("data/covid_departamental.csv", ";", 
                         escape_double = FALSE, trim_ws = TRUE, locale = locale(encoding = "ISO-8859-1"))
-       casos_pronvinciales <- casos_pronvinciales[,-c(4:(ncol(casos_pronvinciales)-1))] 
-       names(casos_pronvinciales) <- c("provincia", "departamento", "localidad", "cantidad")
-    
+       casos_pronvinciales <- casos_pronvinciales[,-c(6:(ncol(casos_pronvinciales)))] 
+       names(casos_pronvinciales) <- c("provincia", "departamento",  "localidad","fecha","cantidad")
+ 
        ###
        provincias_hoy <- read_excel("data/provincias_hoy.xlsx")
-       
-       ### ENTRE RIOS
-       # covid_er <- read_delim("data/entre_rios_casos.csv", ";", escape_double = FALSE, 
-       #                        locale = locale(encoding = "ISO-8859-1"), trim_ws = TRUE)
-       # poblac_er <-  read_delim("data/poblaciones/poblacion_entre_rios.csv",  ";", escape_double = FALSE, 
-       #                     locale = locale(decimal_mark = ",", 
-       #                                     grouping_mark = ".", encoding = "ISO-8859-1"), trim_ws = TRUE)
-       # names(poblac_er) <- c("departamento", "poblacion")
     }
   
      color <- function(d){
@@ -208,8 +107,6 @@ sep.miles <- function(x){format(x,big.mark=".")}
                if_else(d < 75, '#d7301f',
                if_else(d < 100, '#b30000',
                        "#7f0000"))))
-               # if_else(d < 125, '#FEB24C',
-               # if_else(d < 150, '#FED976','#FFEDA0')))))))
          return(c)}
   
 ```
@@ -481,7 +378,7 @@ Gracias al aporte de reunir y disponibilizar los datos de [Sistemas Mapache](htt
 
 ```{r dptoArg, echo=FALSE, message=FALSE, warning=FALSE}
 
-   casos_pronvinciales <- casos_pronvinciales %>% select(provincia, localidad, cantidad)
+  casos_pronvinciales <- casos_pronvinciales %>% select(provincia, localidad, cantidad)
   
   casos_pronvinciales <- casos_pronvinciales %>% 
     left_join(localidades, by=c("localidad"="nombre", "provincia"="provincia")) %>% unique()

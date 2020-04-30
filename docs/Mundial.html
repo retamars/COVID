@@ -396,13 +396,16 @@ div.tocify {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">Home</a>
+  <a href="index.html">Inicio</a>
 </li>
 <li>
   <a href="Mundial.html">Mundial</a>
 </li>
 <li>
-  <a href="Links.html">Links</a>
+  <a href="Sudamerica.html">Sudamerica</a>
+</li>
+<li>
+  <a href="Argentina.html">Argentina</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -421,10 +424,6 @@ div.tocify {
 </div>
 
 
-<blockquote>
-<p>Análisis realizado por el Grupo de Investigación en Bases de Datos - UTN - FRCU <a href="http://www.frcu.utn.edu.ar/gibd" class="uri">http://www.frcu.utn.edu.ar/gibd</a></p>
-<p><a href="mailto:gibd@frcu.utn.edu.ar" class="email">gibd@frcu.utn.edu.ar</a></p>
-</blockquote>
 <div id="situación-mundial" class="section level1">
 <h1>Situación Mundial</h1>
 <div id="casos-actuales" class="section level2">
@@ -3247,7 +3246,7 @@ $(document).ready(function ()  {
 
     // establish options
     var options = {
-      selectors: "h1",
+      selectors: "h1,h2,h3,h4",
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {

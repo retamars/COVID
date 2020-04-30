@@ -1,10 +1,10 @@
 ---
-title: "Mundial"
+title: "COVID-19 Argentina"
 output:
   html_document:
     toc: true
     toc_float: true
-    collapsed: false
+    # collapsed: false
     number_sections: false
     toc_depth: 3
     #code_folding: hide
@@ -13,11 +13,11 @@ output:
 
 ```{r setup, include=FALSE}
   knitr::opts_chunk$set(
-    cache = TRUE,
-  	echo = FALSE,
-  	message = FALSE,
-  	warning = FALSE
-  )
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE,
+	cache = TRUE
+)
 ```
 
 ```{r importar, message=FALSE, warning=FALSE, include=FALSE}
@@ -150,14 +150,14 @@ sep.miles <- function(x){format(x,big.mark=".")}
  
 ```
 
-# Sudamérica
+<!-- # Sudamérica -->
 
 ## Inicios
-En Sud América el primer caso detectado de COVID-19 se informa el día `r day(min(sudamerica$fecha))` de `r format(min(sudamerica$fecha), "%b")` del 2020 en `r sudamerica %>% filter(fecha==min(sudamerica$fecha)) %>% select(pais)`. 
+En Sud América el primer caso detectado de COVID-19 se informa el día `r lubridate::day(min(sudamerica$fecha))` de `r format(min(sudamerica$fecha), "%b")` del 2020 en `r sudamerica %>% filter(fecha==min(sudamerica$fecha)) %>% select(pais)`. 
 A continuación se muestran las fechas en que se detectó por primera vez un infectado en cada país:
 
-```{r tablaFechas, echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, out.width='100%', out.height='70%', paged.print=FALSE}
- # day(min(sudamerica$fecha))
+```{r tablaFechas, echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, out.height='70%', out.width='100%', paged.print=FALSE}
+ 
   fechas <- sudamerica %>%
     group_by(pais) %>%  arrange( fecha ) %>%
     mutate(inicio= format(min(fecha),'%d/%m/%Y') ) %>%

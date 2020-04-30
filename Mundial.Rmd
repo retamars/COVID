@@ -4,9 +4,9 @@ output:
   html_document:
     toc: true
     toc_float: true
-    collapsed: false
+    # collapsed: false
     number_sections: false
-    toc_depth: 3
+    toc_depth: 4
     #code_folding: hide
 ---
 
@@ -64,22 +64,22 @@ sep.miles <- function(x){format(x,big.mark=".")}
 
   ## Mapas y Poblaciones
     {
-      argentina <- fromJSON(file = "data/mapas/ar-all.geo.json")
+      # argentina <- fromJSON(file = "data/mapas/ar-all.geo.json")
       sud <- fromJSON(file="data/mapas/south-america.geo.json")
       world <- fromJSON(file="data/mapas/world.geo.json")
-      entrerios <- fromJSON(file="data/mapas/entrerios_dpto.geo.json")
-      deptos <- st_read(dsn ="data/mapas/departamentos.shp") 
-      deptos_er <- st_read(dsn ="data/mapas/departamentos_entrerios.shp") 
-    
-      localidades <- read_csv("data/mapas/localidades.csv", 
-                              locale = locale(encoding = "ISO-8859-1"))
-      
+      # entrerios <- fromJSON(file="data/mapas/entrerios_dpto.geo.json")
+      # deptos <- st_read(dsn ="data/mapas/departamentos.shp") 
+      # deptos_er <- st_read(dsn ="data/mapas/departamentos_entrerios.shp") 
+      # 
+      # localidades <- read_csv("data/mapas/localidades.csv", 
+      #                         locale = locale(encoding = "ISO-8859-1"))
+      # 
       # Paises América
-      poblacion <- data.frame( c('Argentina', 'Bolivia', 'Brazil', 'Chile', 'Colombia', 'Ecuador',
-                                 'Paraguay',	'Peru',	'Surinam', 'Uruguay',  'Venezuela'),
-                               c(44938712, 11383094,	210147125, 19107216, 50372424, 17300000,
-                                 7152703, 33105273,524000, 3529014, 28067000))
-      names(poblacion) <- c('pais', 'poblacion')
+      # poblacion <- data.frame( c('Argentina', 'Bolivia', 'Brazil', 'Chile', 'Colombia', 'Ecuador',
+      #                            'Paraguay',	'Peru',	'Surinam', 'Uruguay',  'Venezuela'),
+      #                          c(44938712, 11383094,	210147125, 19107216, 50372424, 17300000,
+      #                            7152703, 33105273,524000, 3529014, 28067000))
+      # names(poblacion) <- c('pais', 'poblacion')
       # poblacion_arg <- read_delim("data/poblaciones/prov_argentina.csv", ";", escape_double = FALSE,
       #                                locale = locale(decimal_mark = ",", encoding = "ISO-8859-1"),
       #                               trim_ws = TRUE)
@@ -154,70 +154,70 @@ sep.miles <- function(x){format(x,big.mark=".")}
     
 
   ## Dataset Sudamérica
-    { 
-      sudamerica <- mundial_ambos %>% 
-        filter(pais %in% poblacion$pais) 
-      
-      sudamerica <- sudamerica %>% group_by(pais) %>% mutate(nuevos = casos-lag(casos))
-      
-      sudamerica$nuevos <- if_else(is.na(sudamerica$nuevos)&sudamerica$dia==1, 
-                                   sudamerica$casos, sudamerica$nuevos)
-      
-      sudamerica$semanal <- 0
-        for(p in sudamerica$pais){
-          for(i in 8:max(sudamerica$dia[sudamerica$pais==p])){
-            semanal <- sum(sudamerica$nuevos[((sudamerica[,"pais"]==p)&
-                                                (sudamerica[,"dia"]<=i)&(sudamerica[,"dia"]>=(i-6)))])
-            sudamerica$semanal[((sudamerica[,"pais"]==p) & 
-                                  (sudamerica[,"dia"]==i))] <- if_else(semanal >0, semanal, 0)
-          }}
-
-    sudamerica$muertes <- if_else(is.na(sudamerica$muertes), 0, sudamerica$muertes)
-  }
+  #   { 
+  #     sudamerica <- mundial_ambos %>% 
+  #       filter(pais %in% poblacion$pais) 
+  #     
+  #     sudamerica <- sudamerica %>% group_by(pais) %>% mutate(nuevos = casos-lag(casos))
+  #     
+  #     sudamerica$nuevos <- if_else(is.na(sudamerica$nuevos)&sudamerica$dia==1, 
+  #                                  sudamerica$casos, sudamerica$nuevos)
+  #     
+  #     sudamerica$semanal <- 0
+  #       for(p in sudamerica$pais){
+  #         for(i in 8:max(sudamerica$dia[sudamerica$pais==p])){
+  #           semanal <- sum(sudamerica$nuevos[((sudamerica[,"pais"]==p)&
+  #                                               (sudamerica[,"dia"]<=i)&(sudamerica[,"dia"]>=(i-6)))])
+  #           sudamerica$semanal[((sudamerica[,"pais"]==p) & 
+  #                                 (sudamerica[,"dia"]==i))] <- if_else(semanal >0, semanal, 0)
+  #         }}
+  # 
+  #   sudamerica$muertes <- if_else(is.na(sudamerica$muertes), 0, sudamerica$muertes)
+  # }
     
   ## Dataset Argentina
-    {  
-      ### Totales generales
-      argCov <- read_delim("data/argentina_gral.csv", ";", 
-                           escape_double = FALSE, trim_ws = TRUE, 
-                           locale = locale(encoding = "ISO-8859-1"))
-      names(argCov) <- c("dia", "casosD", "Detectados", "muertesD", "Fallecidos", "Recuperados",
-                      "UTI","MuestraD","TotalPruebas","DescEpidemiologia", "DescTest", "Descartados", 
-                      "Mujeres", "Hombres", "Importados", "Estrecho", "Comunitaria", "Investigacion")
-
-      poblacionArg <- read_delim("data/poblaciones/prov_argentina.csv", ";", escape_double = FALSE,
-                                 locale = locale(decimal_mark = ",", grouping_mark = ".",
-                                                 encoding = "ISO-8859-1"), trim_ws = TRUE)
-       
-      ### Detalle por provincias
-      covidArg <-read_delim("data/casos_provincias.csv", ";", 
-                            escape_double = FALSE, trim_ws = TRUE, locale = locale(encoding = "ISO-8859-1"))
-      covidArg$FECHA <- as.Date(covidArg$FECHA, '%d/%m/%Y')
-    
-      ### Detalle fallecidos
-      muertosArg <- read_delim("data/argentina_fallecidos.csv", ";", 
-                               escape_double = FALSE, trim_ws = TRUE, locale = locale(encoding = "ISO-8859-1"))
-   }
-  
-  ## Dataset Provincias Argentinas
-    {
-       casos_pronvinciales <-read_delim("data/covid_departamental.csv", ";", 
-                        escape_double = FALSE, trim_ws = TRUE, locale = locale(encoding = "ISO-8859-1"))
-       casos_pronvinciales <- casos_pronvinciales[,-c(4:(ncol(casos_pronvinciales)-1))] 
-       names(casos_pronvinciales) <- c("provincia", "departamento", "localidad", "cantidad")
-    
-       ###
-       provincias_hoy <- read_excel("data/provincias_hoy.xlsx")
-       
-       ### ENTRE RIOS
-       covid_er <- read_delim("data/entre_rios_casos.csv", ";", escape_double = FALSE, 
-                              locale = locale(encoding = "ISO-8859-1"), trim_ws = TRUE)
-       poblac_er <-  read_delim("data/poblaciones/poblacion_entre_rios.csv",  ";", escape_double = FALSE, 
-                           locale = locale(decimal_mark = ",", 
-                                           grouping_mark = ".", encoding = "ISO-8859-1"), trim_ws = TRUE)
-       names(poblac_er) <- c("departamento", "poblacion")
-    }
-  
+  #   {  
+  #     ### Totales generales
+  #     argCov <- read_delim("data/argentina_gral.csv", ";", 
+  #                          escape_double = FALSE, trim_ws = TRUE, 
+  #                          locale = locale(encoding = "ISO-8859-1"))
+  #     names(argCov) <- c("dia", "casosD", "Detectados", "muertesD", "Fallecidos", "Recuperados",
+  #                     "UTI","MuestraD","TotalPruebas","DescEpidemiologia", "DescTest", "Descartados", 
+  #                     "Mujeres", "Hombres", "Importados", "Estrecho", "Comunitaria", "Investigacion")
+  # 
+  #     poblacionArg <- read_delim("data/poblaciones/prov_argentina.csv", ";", escape_double = FALSE,
+  #                                locale = locale(decimal_mark = ",", grouping_mark = ".",
+  #                                                encoding = "ISO-8859-1"), trim_ws = TRUE)
+  #      
+  #     ### Detalle por provincias
+  #     covidArg <-read_delim("data/casos_provincias.csv", ";", 
+  #                           escape_double = FALSE, trim_ws = TRUE, locale = locale(encoding = "ISO-8859-1"))
+  #     covidArg$FECHA <- as.Date(covidArg$FECHA, '%d/%m/%Y')
+  #   
+  #     ### Detalle fallecidos
+  #     muertosArg <- read_delim("data/argentina_fallecidos.csv", ";", 
+  #                              escape_double = FALSE, trim_ws = TRUE, locale = locale(encoding = "ISO-8859-1"))
+  #  }
+  # 
+  # ## Dataset Provincias Argentinas
+  #   {
+  #      casos_pronvinciales <-read_delim("data/covid_departamental.csv", ";", 
+  #                       escape_double = FALSE, trim_ws = TRUE, locale = locale(encoding = "ISO-8859-1"))
+  #      casos_pronvinciales <- casos_pronvinciales[,-c(4:(ncol(casos_pronvinciales)-1))] 
+  #      names(casos_pronvinciales) <- c("provincia", "departamento", "localidad", "cantidad")
+  #   
+  #      ###
+  #      provincias_hoy <- read_excel("data/provincias_hoy.xlsx")
+  #      
+  #      ### ENTRE RIOS
+  #      covid_er <- read_delim("data/entre_rios_casos.csv", ";", escape_double = FALSE, 
+  #                             locale = locale(encoding = "ISO-8859-1"), trim_ws = TRUE)
+  #      poblac_er <-  read_delim("data/poblaciones/poblacion_entre_rios.csv",  ";", escape_double = FALSE, 
+  #                          locale = locale(decimal_mark = ",", 
+  #                                          grouping_mark = ".", encoding = "ISO-8859-1"), trim_ws = TRUE)
+  #      names(poblac_er) <- c("departamento", "poblacion")
+  #   }
+  # 
      color <- function(d){
           c <- if_else(d < 25, '#fdd49e',
                if_else(d < 50, '#fc8d59',

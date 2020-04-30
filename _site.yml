@@ -2,7 +2,7 @@ name: "COVID-19 GIBD"
 navbar:
   title: "COVID-19 GIBD"
   left:
-    - text: "Home"
+    - text: "Inicio"
       href: index.html
     - text: "Mundial"
       href: Mundial.html

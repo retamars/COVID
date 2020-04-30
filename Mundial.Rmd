@@ -1,5 +1,5 @@
 ---
-title: "Mundial"
+title: "COVID-19 Mundial"
 output:
   html_document:
     toc: true

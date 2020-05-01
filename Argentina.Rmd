@@ -373,7 +373,7 @@ Debido a que no todas las provincias lo informan diariamente pueden existir algu
 
 
 
-### Distribución por Departamentos
+## Distribución por Departamentos
 Gracias al aporte de reunir y disponibilizar los datos de [Sistemas Mapache](https://github.com/SistemasMapache/Covid19arData) y al aporte de muchos usuarios como [@ClariCardozoCas](https://twitter.com/ClariCardozoCas), [@juanjocorrea_ok](https://twitter.com/juanjocorrea_ok) se muestra la distribución de casos a nivel departamental de las provincias: Buenos Aires, Ciudad Autónoma de Buenos Aires, Río Negro, Neuquén, Tucumán,  Santa Fe, Chaco, Salta y Entre Ríos en base a datos propios.
 
 ```{r dptoArg, echo=FALSE, message=FALSE, warning=FALSE}

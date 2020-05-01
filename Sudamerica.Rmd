@@ -19,25 +19,7 @@ output:
 ```
 
 ```{r importarSud, message=FALSE, warning=FALSE, include=FALSE}
-  library(readr)
-  library(dplyr)
-  library(tidyr)
-  library(ggplot2)
-  library(lubridate)
-  library(knitr)
-  library(kableExtra)
-  library(highcharter)
-  library(rjson)
-  library(plotly)
-  library(gganimate)
-  library(stringr)
-  library(leaflet)
-  library(sf)
-  library(tmap)
-  library(googlesheets4)
-  library(readxl)
-# library(shiny)
-
+ 
 sep.miles <- function(x){format(x,big.mark=".")}
  
   #################
@@ -344,11 +326,12 @@ Se puede observar que casi todos los países siguen un camino muy similar de cre
 
 	avance <- sudamerica %>% group_by(pais) %>% filter(dia != max(dia))
    
-	dinamico <- ggplot(avance) +
+	# dinamico <- 
+	  ggplot(avance) +
 	  geom_line(aes(casos, semanal, group=pais, color=pais), size=1)+ scale_y_log10() + scale_x_log10() 
 
-	dinamico <- dinamico + transition_reveal(casos)
-	animate(dinamico, renderer = ffmpeg_renderer(format = "webm"))
+	# dinamico <- dinamico + transition_reveal(casos)
+	# animate(dinamico, renderer = ffmpeg_renderer(format = "webm"))
 ```
 
 #### Por país

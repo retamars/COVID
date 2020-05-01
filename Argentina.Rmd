@@ -275,7 +275,7 @@ Debido a que no todas las provincias lo informan diariamente pueden existir algu
           hc_add_series_map(argentina, activos, name = "Activos",
                             value = "activos", joinBy = c("name", "provincia"),
                             dataLabels = list(enabled = TRUE, format = '{point.properties.woe-name}')) %>%
-         hc_colorAxis(stops=color_stops(n=length(colors), colors = colors)) %>%
+          hc_colorAxis(stops=color_stops(n=length(colors), colors = colors)) %>%
           hc_legend(align = "center", x = 0, y = -10) %>%
           hc_mapNavigation(enabled = TRUE) %>%
           hc_add_theme(hc_theme_ffx()) %>% 

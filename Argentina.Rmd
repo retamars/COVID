@@ -54,18 +54,9 @@ sep.miles <- function(x){format(x,big.mark=".")}
       deptos <- st_read(dsn ="data/mapas/departamentos.shp") 
      
       localidades <- read_csv("data/mapas/localidades.csv", 
-                              locale = locale(encoding = "ISO-8859-1"))
-      
-      # Paises América
-      # poblacion <- data.frame( c('Argentina', 'Bolivia', 'Brazil', 'Chile', 'Colombia', 'Ecuador',
-      #                            'Paraguay',	'Peru',	'Surinam', 'Uruguay',  'Venezuela'),
-      #                          c(44938712, 11383094,	210147125, 19107216, 50372424, 17300000,
-      #                            7152703, 33105273,524000, 3529014, 28067000))
-      # names(poblacion) <- c('pais', 'poblacion')
-      # poblacion_arg <- read_delim("data/poblaciones/prov_argentina.csv", ";", escape_double = FALSE,
-      #                                locale = locale(decimal_mark = ",", encoding = "ISO-8859-1"),
-      #                               trim_ws = TRUE)
-  }  
+                            locale = locale(encoding = "ISO-8859-1"))
+    }
+
   ## Dataset Argentina
     {  
       ### Totales generales

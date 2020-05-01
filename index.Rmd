@@ -17,11 +17,6 @@ output: html_document
 <div class="row" style="padding-top: 30px;">
 <div class="col-sm-6">
 
-> Análisis realizado por el Grupo de Investigación en Bases de Datos - UTN - FRCU 
-> <http://www.frcu.utn.edu.ar/gibd>
->
-> gibd@frcu.utn.edu.ar
-
 
 # **COVID-19 GIBD**
 
@@ -44,6 +39,6 @@ Este trabajo fue realizado con el objetivo de aportar información sobre la pand
 ### [Grupo de Investigación en Bases de Datos](http://www.frcu.utn.edu.ar/gibd/)
 
 <a href = "http://www.frcu.utn.edu.ar/gibd/">
-![](images/logo.png)
+![](images/logo.jpg)
 </a>
 </div>

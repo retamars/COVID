@@ -63,7 +63,8 @@ output:
 
   ## Mapas y Poblaciones
       world <- fromJSON(file="data/mapas/world.geo.json")
-
+      pob_mundial <- read_delim("data/poblaciones/mundial.csv",  ";", escape_double = FALSE, 
+                                locale = locale(encoding = "ISO-8859-1"),  trim_ws = TRUE)
 
   ## Dataset Mundial
     {
@@ -136,16 +137,16 @@ output:
       }
     
   ## Dataset Paises mas afectados y Arg
-    { mayores <- c('China', 'France', 'US', 'Spain', 'Italy',  'Germany', 'Argentina')#, 'Korea, South')
+    { mayores <- c('China', 'France', 'US', 'Spain', 'United States of America', 'Italy',  'Germany', 'Argentina')#, 'Korea, South')
       
       afectados <- mundial_ambos %>% 
         filter(pais %in% mayores) %>% 
         select(pais, fecha, casos, muertes,  dia) %>% 
         arrange(pais,fecha) 
-  
+       
         afectados$muertes <- if_else(is.na(afectados$muertes), 0, afectados$muertes)
         
-        afectados$pais <- gsub("US", "EEUU", afectados$pais)
+        afectados$pais <- gsub("United States of America", "EEUU", afectados$pais)
         afectados$pais <- gsub("Spain", "España", afectados$pais)
         afectados$pais <- gsub("Korea, South", "Corea del Sur", afectados$pais)
         afectados$pais <- gsub("Italy", "Italia", afectados$pais)
@@ -160,8 +161,6 @@ output:
                if_else(d < 75, '#d7301f',
                if_else(d < 100, '#b30000',
                        "#7f0000"))))
-               # if_else(d < 125, '#FEB24C',
-               # if_else(d < 150, '#FED976','#FFEDA0')))))))
          return(c)}
   
 ```
@@ -264,6 +263,14 @@ Las muertes por la pandemia alcanzan las **`r   sep.miles(as.integer(sum(covid19
        
 ```
 
+
+
+<!-- ## Mortalidad -->
+<!-- ```{r moratMund} -->
+<!--   vacios <- mundial_ambos %>% left_join(pob_mundial) %>%  filter(is.na(poblacion)) %>% select(pais) %>%  unique() -->
+<!-- ``` -->
+
+
 ## Evolución por fecha
 En el siguiente gráfico se puede analizar la velocidad y magnitud que ha tenido la propagación del Covid-19 en los países más afectados hasta la fecha indicada y Argentina. 
 
@@ -288,6 +295,8 @@ Las curvas de evolución a escala lineal de casos detectados de COVID-19 en Arge
   fig <- layout(fig, xaxis = list(title = "día"), yaxis = list(title = "casos"))
   fig
 ```
+
+
 
 ## Evolución en días
 Excluyendo China y comparando la evolución de los casos detectados en estos paises en los primeros `r max(afectados$dia.x[afectados$pais=="Argentina"]) ` días, que son los transcurridos desde el primer caso detectado en Argentina, se obtienen las siguientes curvas: 

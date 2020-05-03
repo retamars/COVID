@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r carga, include=FALSE}
+```{r carga, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
   entrerios <- fromJSON(file="data/mapas/entrerios_dpto.geo.json")
   deptos_er <- st_read(dsn ="data/mapas/departamentos_entrerios.shp") 
       
@@ -29,7 +29,7 @@ A continuación se muestran la cantidad de casos de COVID-19 confirmados por el 
 
 ###  {.tabset  .tabset-fade .tabset-pills}
 #### Departamental
-```{r mapaER}
+```{r mapaER, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
   covider <- covid_er %>% group_by(DEPARTAMENTO) %>%
     mutate(cantidad=n()) %>% select(DEPARTAMENTO, cantidad) %>% unique()
@@ -85,7 +85,7 @@ La incidencia acumulada (IA) a nivel departamental, considerando la población p
 
 ###  {.tabset  .tabset-fade .tabset-pil}
 #### Mapa
-```{r casosER}
+```{r casosER, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 
    
@@ -110,7 +110,7 @@ La incidencia acumulada (IA) a nivel departamental, considerando la población p
 ```
 
 #### Tabla
-```{r tablaIAER}
+```{r tablaIAER, echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
  tabiaprov_er <- covid_er_ia %>% select(DEPARTAMENTO, poblacion, cantidad, ia) %>% arrange(desc(ia))
   tabiaprov_er %>% kable(col.names = c("Departemento","Población",  "Casos", "Tasa Incidencia"),
                       format.args = list( big.mark=".", decimal.mark = ","),

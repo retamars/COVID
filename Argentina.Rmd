@@ -38,7 +38,7 @@ output:
   library(tmap)
   library(googlesheets4)
   library(readxl)
-  # library(shiny)
+
 
 sep.miles <- function(x){format(x,big.mark=".")}
  
@@ -52,9 +52,13 @@ sep.miles <- function(x){format(x,big.mark=".")}
       argentina <- fromJSON(file = "data/mapas/ar-all.geo.json")
     
       deptos <- st_read(dsn ="data/mapas/departamentos.shp") 
-     
-      localidades <- read_csv("data/mapas/localidades.csv", 
-                            locale = locale(encoding = "ISO-8859-1"))
+      amba_dptos <- st_read(dsn ="data/mapas/AMBA_dptos.shp")
+      
+      localidades <- read_csv("data/mapas/localidades.csv", locale = locale(encoding = "ISO-8859-1"))
+      
+      amba_loc <-read_delim("data/poblaciones/AMBA.csv", ";", escape_double = FALSE, 
+                            locale = locale(encoding = "ISO-8859-1"), trim_ws = TRUE)
+      
     }
 
   ## Dataset Argentina
@@ -83,21 +87,23 @@ sep.miles <- function(x){format(x,big.mark=".")}
   
   ## Dataset Provincias Argentinas
     {
-       casos_pronvinciales <-read_delim("data/covid_departamental.csv", ";", 
-                        escape_double = FALSE, trim_ws = TRUE, locale = locale(encoding = "ISO-8859-1"))
-       casos_pronvinciales <- casos_pronvinciales[,-c(6:(ncol(casos_pronvinciales)))] 
-       names(casos_pronvinciales) <- c("provincia", "departamento",  "localidad","fecha","cantidad")
+      casos_pronvinciales <- read_excel("data/covid_departamental.xlsx")
+       # casos_pronvinciales <-read_delim("data/covid_departamental.csv", ";", 
+       #                  escape_double = FALSE, trim_ws = TRUE, locale = locale(encoding = "ISO-8859-1"))
+       # casos_pronvinciales <- casos_pronvinciales[,-c(6:(ncol(casos_pronvinciales)))] 
+       names(casos_pronvinciales) <- c("provincia", "departamento",  "localidad","fecha","cantidad", "recuperados", "fallecidos", "internados", "uti", "enestudio", "aislados", "estudiados", "descartados")
  
        ###
        provincias_hoy <- read_excel("data/provincias_hoy.xlsx")
     }
   
-     color <- function(d){
-          c <- if_else(d < 25, '#fdd49e',
+        color <- function(d){
+          c <- if_else(d==0, '#FFFFFF',
+               if_else(d < 25, '#fdd49e',
                if_else(d < 50, '#fc8d59',
                if_else(d < 75, '#d7301f',
                if_else(d < 100, '#b30000',
-                       "#7f0000"))))
+                       "#7f0000")))))
          return(c)}
   
 ```
@@ -263,10 +269,11 @@ La cantidad de casos Activos se ha calculado en base a los informes provinciales
 Debido a que no todas las provincias lo informan diariamente pueden existir algunas diferencias con las situaciones actuales.
 
 ```{r mapaActivos, echo=FALSE, message=FALSE, warning=FALSE, fig.align='center',  out.height='100%'}
-  activos <- provincias_hoy %>% mutate(activos=confirmados-recuperados-fallecidos) %>%  
-   select(provincia, activos, confirmados, recuperados, fallecidos) 
-
-  colors <- c("#ffffcc", "#ffeda0", "#fed976", "#feb24c", "#fd8d3c", "#fc4e2a", "#e31a1c", "#bd0026", "#800026")
+ activos <- casos_pronvinciales %>% filter(departamento=="TOTAL GENERAL") %>%       mutate(activos=cantidad-recuperados-fallecidos) %>%  
+   select(provincia, activos, cantidad, recuperados, fallecidos) 
+  activos$provincia <- if_else(activos$provincia =="Ciudad Autónoma de Buenos Aires",
+                               "Ciudad de Buenos Aires", activos$provincia)
+   colors <- c("#ffffcc", "#ffeda0", "#fed976", "#feb24c", "#fd8d3c", "#fc4e2a", "#e31a1c", "#bd0026", "#800026")
 
   highchart() %>%
      hc_title(text = "<i>Casos Activos COVID-19 por Provincia en Argentina</i> - <b>GIBD</b>",
@@ -369,56 +376,132 @@ Gracias al aporte de reunir y disponibilizar los datos de [Sistemas Mapache](htt
 
 ```{r dptoArg, echo=FALSE, message=FALSE, warning=FALSE}
 
-  casos_pronvinciales <- casos_pronvinciales %>% select(provincia, localidad, cantidad)
+  casos_pronvincialesT <- casos_pronvinciales %>% select(provincia, localidad, cantidad, fallecidos, recuperados)
   
-  casos_pronvinciales <- casos_pronvinciales %>% 
+  casos_pronvincialesT <- casos_pronvincialesT %>% 
     left_join(localidades, by=c("localidad"="nombre", "provincia"="provincia")) %>% unique()
   
-  casos_pronvinciales$departamen <- if_else(is.na(casos_pronvinciales$departamen)&
-                                              casos_pronvinciales$provincia=="Buenos Aires",
-                                            casos_pronvinciales$localidad, casos_pronvinciales$departamen)
-  casos_pronvinciales$departamen <- if_else(is.na(casos_pronvinciales$departamen)&
-                                              casos_pronvinciales$provincia=="Ciudad Autónoma de Buenos Aires",
-                                            casos_pronvinciales$localidad, casos_pronvinciales$departamen)
-  casos_pronvinciales$departamen <- if_else(is.na(casos_pronvinciales$departamen)&
-                                              casos_pronvinciales$provincia=="Tucumán",
-                                            casos_pronvinciales$localidad, casos_pronvinciales$departamen)
+  casos_pronvincialesT$departamen <- if_else(is.na(casos_pronvincialesT$departamen)&
+                                              casos_pronvincialesT$provincia=="Buenos Aires",
+                                            casos_pronvincialesT$localidad, casos_pronvincialesT$departamen)
+  casos_pronvincialesT$departamen <- if_else(is.na(casos_pronvincialesT$departamen)&
+                                              casos_pronvincialesT$provincia=="Ciudad Autónoma de Buenos Aires",
+                                            casos_pronvincialesT$localidad, casos_pronvincialesT$departamen)
+  casos_pronvincialesT$departamen <- if_else(is.na(casos_pronvincialesT$departamen)&
+                                              casos_pronvincialesT$provincia=="Tucumán",
+                                            casos_pronvincialesT$localidad, casos_pronvincialesT$departamen)
+  casos_pronvincialesT$departamen <- if_else(is.na(casos_pronvincialesT$departamen)&
+                                              casos_pronvincialesT$provincia=="Santiago del Estero",
+                                            casos_pronvincialesT$localidad, casos_pronvincialesT$departamen)
   
   # vacios <- casos_pronvinciales %>% filter(is.na(departamen))
   
-  casos_pronvinciales <- casos_pronvinciales %>%
+  casos_pronvincialesT <- casos_pronvincialesT %>%
     ungroup() %>% 
     group_by(provincia, departamen) %>% 
     mutate(casos = sum(cantidad))%>% unique() %>% 
-    select(provincia, departamen, casos)
-  names(casos_pronvinciales) <- c("provincia", "departamento", "casos")
+    select(provincia, departamen, casos, fallecidos, recuperados)
+  names(casos_pronvincialesT) <- c("provincia", "departamento", "casos", "fallecidos", "recuperados")
+  
+  provincias_casos <- casos_pronvincialesT %>% group_by(provincia) %>% 
+     select(provincia) %>% unique() %>% ungroup()
+  #
+  deptos <- deptos %>%  right_join(provincias_casos , by=c("provincia"="provincia"))
   
   deptos_covid <- deptos %>%  
-    left_join(casos_pronvinciales, by=c("departamen" = "departamento", "provincia"="provincia")) %>% 
-    filter(!is.na(casos)) %>% 
+    left_join(casos_pronvincialesT, by=c("departamen" = "departamento", "provincia"="provincia")) %>% 
+    # filter(!is.na(casos)) %>%
     unique()
   
+  deptos_covid$casos<- if_else(is.na(deptos_covid$casos), 0, deptos_covid$casos)
+  deptos_covid$recuperados<- if_else(is.na(deptos_covid$recuperados), 0, deptos_covid$recuperados)
+  deptos_covid$fallecidos<- if_else(is.na(deptos_covid$fallecidos), 0, deptos_covid$fallecidos)
   
   leaflet(data = deptos_covid) %>% addTiles() %>%
-     addProviderTiles(providers$OpenStreetMap) %>%
+    addProviderTiles(providers$OpenStreetMap) %>% 
     addPolygons( color = "#444444", weight = 1,
                  fillColor = color(deptos_covid$casos), fillOpacity = 0.6,
-                 label = paste(deptos_covid$provincia, ", ",
-                               deptos_covid$departamen, ": ", 
-                               deptos_covid$casos),
-                 popup = paste(deptos_covid$provincia, "<br/>",
-                               deptos_covid$departamen, ": ", 
-                               deptos_covid$casos),
-                 highlightOptions = highlightOptions(color = "white", weight = 2,
-                                                     bringToFront = TRUE))  %>% 
-     addLegend(colors = c('#fdd49e', '#fc8d59', '#d7301f', '#b30000', '#7f0000'), 
-                    labels= c("1-24", "25-49", "50-74", "75 - 99", "100 o más"), position ="bottomright") 
+                 label = paste(deptos_covid$provincia, " - ",
+                               deptos_covid$departamen, " <br/> Confirmados:", 
+                               deptos_covid$casos,  "<br/> Recuperados: ",
+                               deptos_covid$recuperados,  "<br/> Fallecidos: ",
+                               deptos_covid$fallecidos),
+                 popup = paste(deptos_covid$provincia, " - ",
+                               deptos_covid$departamen, " <br/> Confirmados:", 
+                               deptos_covid$casos,  "<br/> Recuperados: ",
+                               deptos_covid$recuperados,  "<br/> Fallecidos: ",
+                               deptos_covid$fallecidos),
+                 highlightOptions = highlightOptions(color = "white", weight = 2, bringToFront = TRUE))  %>% 
+     addLegend(colors = c('#FFFFFF','#fdd49e', '#fc8d59', '#d7301f', '#b30000', '#7f0000'), 
+                    labels= c("0", "1-24", "25-49", "50-74", "75 - 99", "100 o más"), position ="bottomright") 
+  
              
 ```
 
 
 
 
+
+## AMBA
+```{r dptoAMBA, echo=FALSE, message=FALSE, warning=FALSE}
+
+  amba <- casos_pronvinciales %>% filter(localidad %in% amba_loc$departamento ) %>% select(provincia, localidad, cantidad, fallecidos, recuperados)
+  
+  amba <- amba %>% 
+    left_join(localidades, by=c("localidad"="nombre", "provincia"="provincia")) %>% unique()
+  
+  amba$departamen <- if_else(is.na(amba$departamen)& amba$provincia=="Buenos Aires",
+                                            amba$localidad, amba$departamen)
+  
+  amba$departamen <- if_else(is.na(amba$departamen)&
+                               amba$provincia=="Ciudad Autónoma de Buenos Aires" &
+                               amba$localidad=="TOTAL GENERAL", "Ciudad Autónoma de Buenos Aires",
+                             amba$departamen)
+  
+  deptos_covid <- amba_dptos %>%  
+    left_join(amba, by=c("departam_1" = "departamen", "provincia_"="provincia")) %>% 
+    unique() 
+ 
+  # names(deptos_covid) <- c("id", "departam", "provincia", 
+  #                          "cantidad", "fallecidos", "recuperados", "geometry")
+  deptos_covid$cantidad<- if_else(is.na(deptos_covid$cantidad), 0, 
+                                  as.double(deptos_covid$cantidad))
+  deptos_covid$recuperados<- if_else(is.na(deptos_covid$recuperados), 0,
+                                     as.double(deptos_covid$recuperados))
+  deptos_covid$fallecidos<- if_else(is.na(deptos_covid$fallecidos), 0,
+                                    as.double(deptos_covid$fallecidos))
+  
+  tabla <- amba %>% mutate(casost=sum(cantidad), 
+                           muertesT=sum(fallecidos, na.rm = T),
+                           recuperadosT=sum(recuperados, na.rm = T)) %>% 
+    select(casost, muertesT, recuperadosT) %>% unique()
+  
+  paisT <- argCov %>% filter(dia==max(dia)) %>% select(Detectados, Fallecidos, Recuperados)
+
+  
+  
+```
+
+En la actualidad el Area Metropolitana concentra un `r round(tabla$casost/paisT$Detectados*100, 2)` % de los casos confirmados por COVID-19 en todo el país y un `r round(tabla$muertesT/paisT$Fallecidos*100, 2)` % de los fallecidos. Es por ello que a continuación se muestra aparte el mapa del AMBA.
+
+```{r mapaAmba, echo=FALSE, message=FALSE, warning=FALSE}
+  leaflet(data = deptos_covid) %>% addTiles() %>%
+    addProviderTiles(providers$OpenStreetMap) %>% 
+    addPolygons( color = "#444444", weight = 1,
+                 fillColor = color(deptos_covid$cantidad), fillOpacity = 0.6,
+                 # label = paste(deptos_covid$provincia, ", ",
+                 #               deptos_covid$departamen, " ", 
+                 #               deptos_covid$cantidad),
+                 popup = paste(deptos_covid$provincia_, "  ", deptos_covid$departam_1,
+                               " <br/>- confirmados ", deptos_covid$cantidad,
+                               " <br/>- recuperados ",deptos_covid$recuperados,
+                               " <br/>- fallecidos ",deptos_covid$fallecidos),
+                 highlightOptions = highlightOptions(color = "white", weight = 2, bringToFront = TRUE))  %>% 
+     addLegend(colors = c('#FFFFFF','#fdd49e', '#fc8d59', '#d7301f', '#b30000', '#7f0000'), 
+                    labels= c("0", "1-24", "25-49", "50-74", "75 - 99", "100 o más"), 
+               position ="bottomright") 
+  
+```
 
 
 ## Evolución por Provincia

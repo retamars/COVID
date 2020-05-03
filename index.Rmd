@@ -43,3 +43,9 @@ Este trabajo fue realizado con el objetivo de aportar información sobre la pand
 </a>
 </div>
 
+
+## Recomendaciones
+
+[Recomendaciones del Minsiterio de Salud de Argentina](https://www.argentina.gob.ar/coronavirus/cuidarnos)
+
+

@@ -322,7 +322,7 @@ Se puede observar que casi todos los países siguen un camino muy similar de cre
 
 ###  {.tabset  .tabset-fade .tabset-pills}
 #### Sudamérica
-```{r dinamico, echo=FALSE, fig.align='center', fig.show='animate', message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r dinamico, echo=FALSE, fig.align='center',message=FALSE, warning=FALSE, paged.print=FALSE}
 
 	avance <- sudamerica %>% group_by(pais) %>% filter(dia != max(dia))
    

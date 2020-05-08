@@ -11,6 +11,8 @@ navbar:
       href: Sudamerica.html
     - text: "Argentina"
       href: Argentina.html  
+    - text: "Departamental"
+      href: Departamental.html  
     - text: "Entre Rios"
       href: Entre-Rios.html  
 output_dir: "docs"
